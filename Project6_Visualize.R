@@ -33,6 +33,23 @@ library(scatterplot3d)
 
 ## 3.점 차트 ###################################################################
 
+# 공통 데이터
+chart_data <- c(305, 450, 320, 460, 330, 480, 380, 520)
+names(chart_data) <- c("2018 1분기 ", "2019 1분기",
+                       "2018 2분기 ", "2019 2분기",
+                       "2018 3분기 ", "2019 3분기",
+                       "2018 4분기 ", "2019 4분기")
+# 자료형 변환
+point_df <- data.frame(chart_data,names(chart_data))
+
+
+# ggplot2를 이용한 시각화
+ggplot(data = point_df,aes(x = chart_data, y = names.chart_data.)) + geom_point()
+
+
+# plotly를 이용한 시각화
+plot_ly(data = point_df, x = ~chart_data, y = ~names.chart_data., type = 'scatter')
+
 
 
 
