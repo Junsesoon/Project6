@@ -113,6 +113,18 @@ plot_ly(a,x=VAD$category,y=VAD$Freq,type = 'box')
 
 ## 9.변수간의 비교 시각화 ######################################################
 
+# 공통 데이터
+data(iris)
+
+# graphics 패키지를 이용한 비교 시각화
+attributes(iris)
+pairs(iris[iris$Species == "versicolor", 1:4])
+pairs(iris[iris$Species == "virginica", 1:4])
+pairs(iris[iris$Species == "setosa", 1:4])
+
+# ggplot2(ggpairs) 패키지를 이용한 비교 시각화
+ggpairs(iris, columns = colnames(iris))
+
 
 
 
