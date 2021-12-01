@@ -33,6 +33,30 @@ library(scatterplot3d)
 
 ## 3.점 차트 ###################################################################
 
+# 공통 데이터
+chart_data <- c(305, 450, 320, 460, 330, 480, 380, 520)
+names(chart_data) <- c("2018 1분기 ", "2019 1분기",
+                       "2018 2분기 ", "2019 2분기",
+                       "2018 3분기 ", "2019 3분기",
+                       "2018 4분기 ", "2019 4분기")
+# 자료형 변환
+point_df <- data.frame(chart_data,names(chart_data))
+
+
+# graphics 패키지를 이용한 시각화
+dotchart(chart_data, color = c("blue", "red"),
+         lcolor = "black", pch = 1:2,
+         labels = names(chart_data),
+         xlab = "매출액",
+         main = "분기별 판매현황: 점차트 시각화",cex = 1.2)
+
+
+# ggplot2 패키지를 이용한 시각화
+ggplot(data = point_df,aes(x = chart_data, y = names.chart_data.)) + geom_point()
+
+# plotly 패키지를 이용한 시각화
+plot_ly(data = point_df, x = ~chart_data, y = ~names.chart_data., type = 'scatter')
+
 
 
 
@@ -42,6 +66,32 @@ library(scatterplot3d)
 
 
 ## 5.상자 그래프 ###############################################################
+
+# 공통 데이터
+data("VADeaths")
+
+# graphics 패키지를 이용한 시각화
+# 1) 시각화
+boxplot(VADeaths, range = 0)
+boxplot(VADeaths, range = 0, notch = T)
+# 2) 중심선 추가
+abline(h = 37, lty = 3, col = "red")
+
+
+# ggplot2 패키지를 이용한 시각화
+# 1) 자료형 변환
+VAD <- as.data.frame.table(VADeaths)
+colnames(VAD) = c("age","category","Freq")
+# 2) 시각화
+ggplot(VAD,aes(x = category, y = Freq)) +
+  geom_boxplot()
+
+
+# plotly 패키지를 이용한 시각화
+# 1) 자료형 변환
+a <- as.data.frame(VADeaths)
+# 2) 시각화
+plot_ly(a,x=VAD$category,y=VAD$Freq,type = 'box')
 
 
 
@@ -62,6 +112,18 @@ library(scatterplot3d)
 
 
 ## 9.변수간의 비교 시각화 ######################################################
+
+# 공통 데이터
+data(iris)
+
+# graphics 패키지를 이용한 비교 시각화
+attributes(iris)
+pairs(iris[iris$Species == "versicolor", 1:4])
+pairs(iris[iris$Species == "virginica", 1:4])
+pairs(iris[iris$Species == "setosa", 1:4])
+
+# ggplot2(ggpairs) 패키지를 이용한 비교 시각화
+ggpairs(iris, columns = colnames(iris))
 
 
 
