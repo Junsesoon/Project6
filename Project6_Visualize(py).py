@@ -30,6 +30,16 @@ import matplotlib.pyplot as plt #그래프 시각화 패키지
 
 
 ## 3.점 차트 ###################################################################
+# 1) 데이터 생성
+chart_data = (305, 450, 320, 460, 330, 480, 380, 520)
+chart_quater = ["2018 1분기 ", "2019 1분기",
+                "2018 2분기 ", "2019 2분기",
+                "2018 3분기 ", "2019 3분기",
+                "2018 4분기 ", "2019 4분기"]
+
+# 2) 점 차트 시각화
+plt.scatter(chart_data,chart_quater)
+plt.title('chart data')
 
 
 
@@ -55,6 +65,7 @@ fig, ax = plt.subplots()
 ax.boxplot([Rural_Male,RuRal_Female,Urban_Male,Urban_Female])
 ax.set_xlabel('category')
 ax.set_ylabel('age')
+plt.title('VADeaths')
 plt.show()
 
 
