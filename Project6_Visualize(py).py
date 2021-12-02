@@ -9,6 +9,14 @@
   #황윤수: 누적 막대, 중첩자료 시각화, 밀도 그래프
 
 # 환경설정
+    # 두번 실행하면 변수 전체 초기화
+    all = [var for var in globals() if var[0] != "_"]
+    for var in all:
+        del globals()[var]
+
+# 라이브러리 모음
+import matplotlib.pyplot as plt #그래프 시각화 패키지
+
 
 
 ## 1.막대차트(가로,세로) #######################################################
@@ -32,7 +40,22 @@
 
 
 ## 5.상자 그래프 ###############################################################
+# 1) VADeaths 데이터 생성
+age = ("50-54","55-59","60-64","65-69","70-74")
+Rural_Male = (11.7,18.1,26.9,41,66)
+RuRal_Female = (8.7,11.7,20.3,30.9,54.3)
+Urban_Male = (15.4,24.3,37,54.6,71.1)
+Urban_Female = (8.4,13.6,19.3,35.1,50)
 
+# 2) 그래프 양식 지정
+plt.style.use('default')
+
+# 3) 시각화
+fig, ax = plt.subplots()
+ax.boxplot([Rural_Male,RuRal_Female,Urban_Male,Urban_Female])
+ax.set_xlabel('category')
+ax.set_ylabel('age')
+plt.show()
 
 
 
