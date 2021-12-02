@@ -16,7 +16,7 @@
 
 # 라이브러리 모음
 import matplotlib.pyplot as plt #그래프 시각화 패키지
-
+from sklearn import datasets #iris 데이터 셋 로딩 패키지
 
 
 ## 1.막대차트(가로,세로) #######################################################
@@ -70,6 +70,7 @@ plt.show()
 
 
 
+
 ## 6.히스토그램 ################################################################
 
 
@@ -86,6 +87,9 @@ plt.show()
 
 
 ## 9.변수간의 비교 시각화 ######################################################
+iris = datasets.load_iris()
+plt.scatter(iris.data[:,0],iris.data[:,1]) #sepal.length 와 sepal.width 비교
+plt.scatter(iris.data[:,2],iris.data[:,3]) #petal.length 와 petal.width 비교
 
 
 
