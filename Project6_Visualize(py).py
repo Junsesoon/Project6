@@ -9,6 +9,14 @@
   #황윤수: 누적 막대, 중첩자료 시각화, 밀도 그래프
 
 # 환경설정
+    # 두번 실행하면 변수 전체 초기화
+    all = [var for var in globals() if var[0] != "_"]
+    for var in all:
+        del globals()[var]
+
+# 라이브러리 모음
+import matplotlib.pyplot as plt #그래프 시각화 패키지
+from sklearn import datasets #iris 데이터 셋 로딩 패키지
 
 
 ## 1.막대차트(가로,세로) #######################################################
@@ -22,6 +30,16 @@
 
 
 ## 3.점 차트 ###################################################################
+# 1) 데이터 생성
+chart_data = (305, 450, 320, 460, 330, 480, 380, 520)
+chart_quater = ["2018 1분기 ", "2019 1분기",
+                "2018 2분기 ", "2019 2분기",
+                "2018 3분기 ", "2019 3분기",
+                "2018 4분기 ", "2019 4분기"]
+
+# 2) 점 차트 시각화
+plt.scatter(chart_data,chart_quater)
+plt.title('chart data')
 
 
 
@@ -32,6 +50,23 @@
 
 
 ## 5.상자 그래프 ###############################################################
+# 1) VADeaths 데이터 생성
+age = ("50-54","55-59","60-64","65-69","70-74")
+Rural_Male = (11.7,18.1,26.9,41,66)
+RuRal_Female = (8.7,11.7,20.3,30.9,54.3)
+Urban_Male = (15.4,24.3,37,54.6,71.1)
+Urban_Female = (8.4,13.6,19.3,35.1,50)
+
+# 2) 그래프 양식 지정
+plt.style.use('default')
+
+# 3) 시각화
+fig, ax = plt.subplots()
+ax.boxplot([Rural_Male,RuRal_Female,Urban_Male,Urban_Female])
+ax.set_xlabel('category')
+ax.set_ylabel('age')
+plt.title('VADeaths')
+plt.show()
 
 
 
@@ -52,6 +87,9 @@
 
 
 ## 9.변수간의 비교 시각화 ######################################################
+iris = datasets.load_iris()
+plt.scatter(iris.data[:,0],iris.data[:,1]) #sepal.length 와 sepal.width 비교
+plt.scatter(iris.data[:,2],iris.data[:,3]) #petal.length 와 petal.width 비교
 
 
 

@@ -16,10 +16,12 @@ setwd("C:/rwork")
 install.packages("ggplot2")
 install.packages("plotly")
 install.packages("scatterplot3d")
+install.packages("GGally")
 
 library(ggplot2)
 library(plotly)
 library(scatterplot3d)
+library(GGally)
 
 ## 1.막대차트(가로,세로) #######################################################
 
@@ -186,7 +188,7 @@ pairs(iris[iris$Species == "versicolor", 1:4])
 pairs(iris[iris$Species == "virginica", 1:4])
 pairs(iris[iris$Species == "setosa", 1:4])
 
-# ggplot2(ggpairs) 패키지를 이용한 비교 시각화
+# ggplot2(GGally) 패키지를 이용한 비교 시각화
 ggpairs(iris, columns = colnames(iris))
 
 
