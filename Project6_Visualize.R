@@ -18,12 +18,14 @@ install.packages("plotly")
 install.packages("scatterplot3d")
 install.packages("GGally")
 install.packages("dplyr") # 파이프 연산자
+install.packages("reshape2") # 데이터 핸들링: melt()
 
 library(ggplot2)
 library(plotly)
 library(scatterplot3d)
 library(GGally)
 library(dplyr)
+library(reshape2)
 
 ## 1.막대차트(가로,세로) #######################################################
 
@@ -90,6 +92,33 @@ chart_df %>%
 
 ## 2.막대차트(누적) ############################################################
 
+# 공통 데이터
+data("VADeaths")
+VADeaths
+VAD.ly <- melt(VADeaths)
+
+# graphics 패키지를 이용한 시각화
+barplot(VADeaths, beside = F, col = rainbow(5))
+title(main="미국 버지니아주 하위계층 사망비율",font.main=4)
+legend(3.8, 200, c("50-54","55-59","60-64","65-69","70-74"),
+       cex = 0.8, fill = rainbow(5))
+
+
+# ggplot2 패키지를 이용한 시각화
+ggplot(VAD.ly, aes(fill=Var1, y=value, x=Var2)) + 
+  geom_bar(position="stack", stat="identity")
+
+
+# plotly 패키지를 이용한 시각화
+VAD.ly %>% as.data.frame() %>% 
+  plot_ly() %>% 
+  add_trace(x = ~Var2, y = ~value, color= ~Var1,  type = "bar") %>% 
+  layout(
+    title = "미국 버지니아주 하위계층 사망비율",
+    xaxis = list(title = "category"),
+    yaxis = list(title = "누적 비율"),
+    barmode = "stack"
+  )
 
 
 
