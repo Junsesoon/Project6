@@ -17,18 +17,79 @@ install.packages("ggplot2")
 install.packages("plotly")
 install.packages("scatterplot3d")
 install.packages("GGally")
+install.packages("dplyr") # 파이프 연산자
 
 library(ggplot2)
 library(plotly)
 library(scatterplot3d)
 library(GGally)
+library(dplyr)
 
 ## 1.막대차트(가로,세로) #######################################################
 
+## 공통 데이터
+chart_data <- c(305, 450, 320, 460, 330, 480, 380, 520)
+names(chart_data) <- c("2018 1분기","2019 1분기","2018 2분기",
+                       "2019 2분기","2018 3분기","2019 3분기",
+                       "2018 4분기","2019 4분기")
+str(chart_data)
+chart_data
+
+## graphics 패키지를 이용한 시각화
+# 1) 세로 막대 차트 그리기
+barplot(chart_data, ylim = c(0, 600),
+        ylab = "매출액 단위 : 만원",  # 레이블 추가
+        xlab = "년도별 분기 현황",
+        col = rainbow(8),  # 색상 지정
+        main = "2018 년도 vs 2019 년도 매출현항 비교")
+
+# 2) 가로 막대 차트 그리기
+barplot(chart_data, xlim = c(0, 600), horiz = T,
+        ylab = "매출액(단위: 만원)",
+        xlab = "년도별 분기 현황",
+        col = rainbow(8), space = 1, cex.names = 0.8,  # 막대 사이 간격 조정
+        main = "2018 년도 vs 2019 년도 매출현항 비교")
+col = rep(c("red", "green"), 4)  # 막대 색상 지정
+
+
+## ggplot2 패키지를 이용한 시각화
+# 1) 세로 막대 차트 그리기
+# 1-1) 자료형 변환
+chart_df <- as.data.frame(chart_data)
+
+# 1-2) 시각화
+chart.bar <- ggplot(data=chart_df) + aes(x=rownames(chart_df),y=chart_data) +
+  geom_bar(stat = "identity"); chart.bar
+
+# 2) 가로 막대 차트 그리기
+chart.bar + coord_flip()
+
+
+## plotly 패키지를 이용한 시각화
+# 1) 세로 막대 차트 그리기
+chart_df %>% 
+  plot_ly() %>% 
+  add_trace(x = rownames(chart_df), y = chart_data , type = "bar") %>% 
+  layout(
+    title = "plotly 세로 막대 그래프",
+    xaxis = list(title = "분기"),
+    yaxis = list(title = "chart data")
+  )
+
+# 2) 가로 막대 차트 그리기
+chart_df %>% 
+  plot_ly() %>% 
+  add_trace(x = chart_data, y = rownames(chart_df), type = "bar") %>% 
+  layout(
+    title = "plotly 세로 막대 그래프",
+    xaxis = list(title = "분기"),
+    yaxis = list(title = "chart data")
+  )
 
 
 
 ## 2.막대차트(누적) ############################################################
+
 
 
 
@@ -103,6 +164,8 @@ fig1 <- fig1 %>% layout(title = "2018~2019년도 분기별 매출현황")
 fig1
 
 
+
+
 ## 5.상자 그래프 ###############################################################
 
 # 공통 데이터
@@ -164,6 +227,7 @@ fig2
 fig2 <- plot_ly(data = iris, x = iris$Sepal.Width, type = "histogram")
 fig2 <- fig2 %>% layout(title = "iris 꽃 받침 너비 Histogram")
 fig2
+
 
 
 
@@ -248,5 +312,6 @@ fig3 <- fig3 %>% layout(
 )
 fig3
 #https://plotly.com/r/choropleth-maps/
+
 
 
