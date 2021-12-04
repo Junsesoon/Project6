@@ -16,9 +16,14 @@ setwd("C:/rwork")
 install.packages("ggplot2")
 install.packages("plotly")
 install.packages("scatterplot3d")
-install.packages("GGally")
+install.packages("GGally") # 변수간 비교: ggpairs()
 install.packages("dplyr") # 파이프 연산자
 install.packages("reshape2") # 데이터 핸들링: melt()
+install.packages("UsingR")
+install.packages("HistData") # Usingr 부속 패키지
+install.packages("Hmisc") # UsingR 부속 패키지
+install.packages("ggmap")
+install.packages("stringr")
 
 library(ggplot2)
 library(plotly)
@@ -26,6 +31,10 @@ library(scatterplot3d)
 library(GGally)
 library(dplyr)
 library(reshape2)
+library(UsingR)
+library(ggmap)
+library(stringr)
+
 
 ## 1.막대차트(가로,세로) #######################################################
 
@@ -96,6 +105,7 @@ chart_df %>%
 data("VADeaths")
 VADeaths
 VAD.ly <- melt(VADeaths)
+colnames(VAD.ly) <- c("age","category","value")
 
 # graphics 패키지를 이용한 시각화
 barplot(VADeaths, beside = F, col = rainbow(5))
@@ -105,14 +115,14 @@ legend(3.8, 200, c("50-54","55-59","60-64","65-69","70-74"),
 
 
 # ggplot2 패키지를 이용한 시각화
-ggplot(VAD.ly, aes(fill=Var1, y=value, x=Var2)) + 
+ggplot(VAD.ly, aes(fill=age, y=value, x=Var2)) + 
   geom_bar(position="stack", stat="identity")
 
 
 # plotly 패키지를 이용한 시각화
 VAD.ly %>% as.data.frame() %>% 
   plot_ly() %>% 
-  add_trace(x = ~Var2, y = ~value, color= ~Var1,  type = "bar") %>% 
+  add_trace(x = ~Var2, y = ~value, color= ~age,  type = "bar") %>% 
   layout(
     title = "미국 버지니아주 하위계층 사망비율",
     xaxis = list(title = "category"),
@@ -185,7 +195,7 @@ fig <- plot_ly(data, labels = ~Categorie, values = ~X1960, type = 'pie')
 fig <- fig %>% layout(title = 'United States Personal Expenditures by Categories in 1960',
                       xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                       yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-fig #https://plotly.com/r/pie-charts/
+fig
 
 CHART_data <- data.frame("Categorie"=names(chart_data), chart_data)
 fig1 <- plot_ly(CHART_data, labels = ~Categorie, values = ~chart_data, type = 'pie')
@@ -262,12 +272,57 @@ fig2
 
 ## 7.산점도 ####################################################################
 
+# 공통 데이터
+price <- runif(10,min=1,max=100)
+plot(price,col= 'red')
+data1 <- as.data.frame(price)
+no <- c(1:10)
+data2 <- data.frame(data1,no)
+data2
+
+
+#ggplot2
+ggplot(data2, aes(x=no, y=price)) +  geom_point(shape=15, size=3, colour="blue")
+
+
+#plotly 산점도
+plot_ly(data2 ,type='scatter', x=~no, y=~price)
+
 
 
 
 ## 8.중첩자료 시각화 ###########################################################
 
+# 공통 데이터
+data(galton)
 
+# graphics 패키지를 이용한 비교 시각화
+galtonData <- as.data.frame(table(galton$child, galton$parent))
+head(galtonData)
+names(galtonData) = c("child", "parent", "freq")
+head(galtonData)
+parent <- as.numeric(galtonData$parent)
+child <- as.numeric(galtonData$child)
+par(mfrow = c(1, 1))
+plot(parent, child,
+     pch = 21, col = "blue", bg = "green", cex = 0.2 * galtonData$freq,
+     xlab = "parent", ylab = "child")
+
+
+# ggplot2 패키지를 이용한 비교 시각화
+freqData <- data.frame(table(galton$child, galton$parent))
+names(freqData) <- c("child", "parent", "freq")
+
+g <- ggplot(data=freqData, aes(x = parent, y = child))+ 
+  scale_size(range = c(1,7), guide = 'none')  +
+  geom_point(colour="grey10", aes(size=freq)) ;g
+
+
+# plotly 패키지를 이용한 비교 시각화
+ga_pl <- plot_ly(galton, 
+                 x = ~child , y = ~parent,
+                 color = ~child , size = ~child)
+ga_pl
 
 
 ## 9.변수간의 비교 시각화 ######################################################
@@ -289,20 +344,85 @@ ggpairs(iris, columns = colnames(iris))
 
 ## 10. 밀도 그래프 #############################################################
 
+# 공통 데이터
+
+# graphics 패키지를 이용한 비교 시각화
+par(mfrow = c(1, 1))
+hist(iris$Sepal.Width, xlab = "iris$Sepal.Width", col = "mistyrose",
+     freq = F, main = "iris 꽃받침 너비", xlim = c(2.0, 4.5))
+lines(density(iris$Sepal.Width), col = "red")
+x <- seq(2.0, 4.5, 0.1)
+curve(dnorm(x, mean = mean(iris$Sepal.Width),
+            sd = sd(iris$Sepal.Width)), col = "mistyrose", add = T)
+
+
+# ggplot2 패키지를 이용한 비교 시각화
+density <- ggplot(data=iris, aes(x=Sepal.Width))
+density + geom_histogram(binwidth=0.2, color="black", fill="mistyrose", aes(y=..density..)) +
+  geom_density(stat="density", alpha=I(0.2), fill="mistyrose") +
+  xlab("Sepal Width") +  ylab("Density") + ggtitle("Histogram & Density Curve")
+
+
+# plotly 패키지를 이용한 비교 시각화
+gg <- ggplot(iris,aes(x = Sepal.Width, color = 'density')) +  
+  geom_histogram(aes(y = ..density..), bins = 12,  fill = 'mistyrose', alpha = 0.5) +  
+  geom_density(color = 'black') +  
+  geom_rug(color = 'mistyrose') + 
+  ylab("") + 
+  xlab("")  + theme(legend.title=element_blank()) +
+  scale_color_manual(values = c('density' = 'black'))
+
+ggplotly(gg)%>% 
+  layout(xaxis = list(   
+    title='Sepal Width', 
+    zerolinecolor = 'gray',   
+    zerolinewidth = 2,   
+    gridcolor = 'black'),   
+    yaxis = list(   
+      title='Density', 
+      zerolinecolor = 'gray',   
+      zerolinewidth = 2,   
+      gridcolor = 'black'))
+
 
 
 
 ## 11. 3차원 산점도 그래프 #####################################################
 
+# scatterplot3d 패키지를 이용한 시각화
+iris_setosa = iris[iris$Species == 'setosa', ]
+iris_versicolor = iris[iris$Species == 'versicolor', ]
+iris_virginica = iris[iris$Species == 'virginica', ]
+# 3차원 틀(Frame)생성하기
+d3 <- scatterplot3d(iris$Petal.Length, 
+                    iris$Sepal.Length,
+                    iris$Sepal.Width, 
+                    type = 'n')
+# 3차원 산점도 시각화
+d3$points3d(iris_setosa$Petal.Length,
+            iris_setosa$Sepal.Length,
+            iris_setosa$Sepal.Width, 
+            bg = 'orange', pch = 21)
+d3$points3d(iris_versicolor$Petal.Length, 
+            iris_versicolor$Sepal.Length,
+            iris_versicolor$Sepal.Width,
+            bg = 'blue', pch = 23)
+d3$points3d(iris_virginica$Petal.Length, 
+            iris_virginica$Sepal.Length,
+            iris_virginica$Sepal.Width, 
+            bg = 'green', pch = 25)
 
+
+# plotly 패키지를 이용한 시각화
+p1 <- plot_ly(iris, x = iris$Sepal.Length,
+              y = iris$Sepal.Width,
+              z = iris$Petal.Length,
+              color = iris$Species)
+p1
 
 
 ## 12. 지도 시각화 #############################################################
-library(plotly)
-#install.packages("ggmap")
-library(ggmap)
 pop <- read.csv('C:/Rwork/dataset3/population201901.csv', header = T)
-library(stringr)
 region <- pop$'지역명'
 lon <- pop$LON
 lat <- pop$LAT
@@ -340,7 +460,6 @@ fig3 <- fig3 %>% layout(
   title = "2019년도 1월 대한민국 인구수", geo = gmap2
 )
 fig3
-#https://plotly.com/r/choropleth-maps/
 
 
 
